@@ -3,7 +3,7 @@ entries:
   helm-chart-test:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2021-10-25T09:47:01.753077599+02:00"
+    created: "2021-10-25T09:46:04.642453497+02:00"
     description: A Helm chart for Kubernetes
     digest: b7ebceef68aca1c8ede55af1406804a15b58a9b4b4f7e86f9782f2f2edb90101
     name: helm-chart-test
@@ -11,21 +11,10 @@ entries:
     urls:
     - https://mastrogiovanni.github.io/helm-chart/helm-chart-test-0.1.0.tgz
     version: 0.1.0
-  hornet:
-  - apiVersion: v2
-    appVersion: 1.16.0
-    created: "2021-10-25T09:47:01.753748205+02:00"
-    description: IOTA Hornet Node
-    digest: 8f3c76475d620ebf55b1db2745030363dbdddffaed31225ebbb2854668598639
-    name: hornet
-    type: application
-    urls:
-    - https://mastrogiovanni.github.io/helm-chart/hornet-0.0.1.tgz
-    version: 0.0.1
   integration-services:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2021-10-25T09:47:01.754346548+02:00"
+    created: "2021-10-25T09:46:04.643119249+02:00"
     description: Integration Service APIs
     digest: a14029c8c507426afe3a1aa39866709b33988adeddeca1794505997687297d9e
     name: integration-services
@@ -33,4 +22,4 @@ entries:
     urls:
     - https://mastrogiovanni.github.io/helm-chart/integration-services-0.0.1.tgz
     version: 0.0.1
-generated: "2021-10-25T09:47:01.752420334+02:00"
+generated: "2021-10-25T09:46:04.64188553+02:00"
