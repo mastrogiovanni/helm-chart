@@ -1,0 +1,70 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "job-{{ include "integration-service-helm-chart.fullname" . }}"
+spec:
+  template:
+    spec:
+      initContainers:
+        - name: cleanup-identity
+          image: busybox:1.28
+          args:
+            - /bin/sh
+            - -c
+            - >
+              set -x;
+              rm -rf /config/server-identity.json
+          volumeMounts:
+            - mountPath: /config
+              name: {{ include "integration-service-helm-chart.fullname" . }}
+
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["node", "dist/index.js", "keygen"]
+          env:
+            - name: "SERVER_IDENTITY_FILE"
+              value: "/config/server-identity.json"
+            - name: "DATABASE_NAME"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "integration-service-helm-chart.fullname" . }}
+                  key: DATABASE_NAME
+            - name: "NETWORK"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "integration-service-helm-chart.fullname" . }}
+                  key: NETWORK
+            - name: "DATABASE_URL"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "integration-service-helm-chart.fullname" . }}
+                  key: DATABASE_URL
+            - name: "IOTA_HORNET_NODE"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "integration-service-helm-chart.fullname" . }}
+                  key: IOTA_HORNET_NODE
+            - name: "IOTA_PERMA_NODE"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "integration-service-helm-chart.fullname" . }}
+                  key: IOTA_PERMA_NODE
+
+            - name: "SERVER_SECRET"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "integration-service-helm-chart.fullname" . }}
+                  key: SERVER_SECRET
+
+          volumeMounts:
+            - mountPath: /config
+              name: {{ include "integration-service-helm-chart.fullname" . }}
+
+      volumes:
+        - name: {{ include "integration-service-helm-chart.fullname" . }}
+          persistentVolumeClaim:
+            claimName: {{ include "integration-service-helm-chart.fullname" . }}
+      restartPolicy: OnFailure
+  backoffLimit: 4

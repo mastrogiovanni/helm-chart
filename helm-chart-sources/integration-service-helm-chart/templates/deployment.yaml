@@ -1,0 +1,163 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "integration-service-helm-chart.fullname" . }}
+  labels:
+    {{- include "integration-service-helm-chart.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "integration-service-helm-chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "integration-service-helm-chart.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "integration-service-helm-chart.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+
+      initContainers:
+        - name: wait-for-hornet
+          image: busybox:1.28
+          args:
+            - /bin/sh
+            - -c
+            - >
+              set -x;
+              until nslookup $IOTA_HORNET_NODE | sed -e 's/[^/]*\/\/\([^@]*@\)\?\([^:/]*\).*/\2/';
+              do 
+              echo waiting for Hornet;
+              sleep 2;
+              done
+          env:
+            - name: "IOTA_HORNET_NODE"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "integration-service-helm-chart.fullname" . }}
+                  key: IOTA_HORNET_NODE
+
+        - name: wait-for-mongo
+          image: busybox:1.28
+          args:
+            - /bin/sh
+            - -c
+            - >
+              set -x;
+              until nslookup "mongodb-service.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local";
+              do 
+              echo waiting for MongoDB;
+              sleep 2;
+              done
+
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+
+          volumeMounts:
+            - mountPath: /config
+              name: root-identity
+
+          #livenessProbe:
+          #  httpGet:
+          #    path: /
+          #    port: http
+          readinessProbe:
+            httpGet:
+              path: /info
+              port: http
+
+          env:
+            - name: "SERVER_IDENTITY_FILE"
+              value: "/config/server-identity.json"
+            - name: "PORT"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "integration-service-helm-chart.fullname" . }}
+                  key: PORT
+
+            - name: "API_VERSION"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "integration-service-helm-chart.fullname" . }}
+                  key: API_VERSION
+            - name: "DATABASE_NAME"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "integration-service-helm-chart.fullname" . }}
+                  key: DATABASE_NAME
+            - name: "NETWORK"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "integration-service-helm-chart.fullname" . }}
+                  key: NETWORK
+            - name: "EXPLORER"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "integration-service-helm-chart.fullname" . }}
+                  key: EXPLORER
+            - name: "IOTA_PERMA_NODE"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "integration-service-helm-chart.fullname" . }}
+                  key: IOTA_PERMA_NODE
+            - name: "DATABASE_URL"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "integration-service-helm-chart.fullname" . }}
+                  key: DATABASE_URL
+            - name: "IOTA_HORNET_NODE"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "integration-service-helm-chart.fullname" . }}
+                  key: IOTA_HORNET_NODE
+
+            - name: "SERVER_SECRET"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "integration-service-helm-chart.fullname" . }}
+                  key: SERVER_SECRET
+            - name: "API_KEY"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "integration-service-helm-chart.fullname" . }}
+                  key: API_KEY
+
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+
+      volumes:
+        - name: root-identity
+          persistentVolumeClaim:
+            claimName: {{ include "integration-service-helm-chart.fullname" . }}
+
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
