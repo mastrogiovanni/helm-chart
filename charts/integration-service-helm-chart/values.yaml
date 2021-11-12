@@ -4,14 +4,19 @@
 
 serverSecret: PpKFhPKJY2efTsN9VkB7WNtYUhX9Utaa
 apiKey: 94F5BA49-12B6-4E45-A487-BF91C442276D
+network: main
+explorer: https://explorer.iota.org/mainnet/transaction
+iotaPermaNode: https://chrysalis-chronicle.iota.org/api/mainnet/
+iotaHornetNode: https://chrysalis-nodes.iota.org:443
+databaseUrl: mongodb://username:password@mongodb-service.default.svc.cluster.local:27017/integration-service-db?readPreference=primary&appname=integration-service-api&ssl=false
 
 replicaCount: 1
 
 image:
-  repository: pippo2 #:3iotaledger/integration-services
+  repository: iotaledger/integration-services
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "3"
+  tag: "latest"
 
 imagePullSecrets: []
 nameOverride: ""

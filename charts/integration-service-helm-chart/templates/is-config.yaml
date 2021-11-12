@@ -6,8 +6,8 @@ data:
   PORT: "3000"
   API_VERSION: v1
   DATABASE_NAME: integration-service-db
-  NETWORK: main
-  EXPLORER: https://explorer.iota.org/mainnet/transaction
-  IOTA_PERMA_NODE: https://chrysalis-chronicle.iota.org/api/mainnet/
-  IOTA_HORNET_NODE: https://chrysalis-nodes.iota.org:443
-  DATABASE_URL: mongodb://username:password@mongodb-service.default.svc.cluster.local:27017/integration-service-db?readPreference=primary&appname=integration-service-api&ssl=false
+  NETWORK:  {{ required "A valid .Values.network entry required!" .Values.network }}
+  EXPLORER: {{ required "A valid .Values.explorer entry required!" .Values.explorer }}
+  IOTA_PERMA_NODE: {{ required "A valid .Values.iotaPermaNode entry required!" .Values.iotaPermaNode }}
+  IOTA_HORNET_NODE: {{ required "A valid .Values.iotaHornetNode entry required!" .Values.iotaHornetNode }}
+  DATABASE_URL: {{ required "A valid .Values.databaseUrl entry required!" .Values.databaseUrl }}
