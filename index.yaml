@@ -3,6 +3,17 @@ entries:
   integration-service-helm-chart:
   - apiVersion: v2
     appVersion: 1.16.0
+    created: "2021-11-12T08:58:36.658166936Z"
+    description: IOTA Integration Services for Kubernetes
+    digest: 98b619fafcf4cbb6893ca245bed9748099dd6dbec3e1feb8a4bf4a3c4f7a6f5d
+    icon: https://raw.githubusercontent.com/mastrogiovanni/helm-chart/master/icons/icon_integration_nobg.png
+    name: integration-service-helm-chart
+    type: application
+    urls:
+    - https://github.com/mastrogiovanni/helm-chart/releases/download/integration-service-helm-chart-0.0.4/integration-service-helm-chart-0.0.4.tgz
+    version: 0.0.4
+  - apiVersion: v2
+    appVersion: 1.16.0
     created: "2021-11-12T08:40:06.038573255Z"
     description: IOTA Integration Services for Kubernetes
     digest: 11f8c0297e5ebf7cd7200afbcea0615c1355a3e313dce8a3492fb4b0301b48aa
@@ -34,4 +45,4 @@ entries:
     urls:
     - https://github.com/mastrogiovanni/helm-chart/releases/download/integration-service-helm-chart-0.0.1/integration-service-helm-chart-0.0.1.tgz
     version: 0.0.1
-generated: "2021-11-12T08:40:06.038587855Z"
+generated: "2021-11-12T08:58:36.658209137Z"
