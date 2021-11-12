@@ -1,6 +1,7 @@
 apiVersion: v2
 name: integration-service-helm-chart
-description: A Helm chart for Kubernetes
+description: IOTA Integration Services for Kubernetes
+
 
 # A chart can be either an 'application' or a 'library' chart.
 #
